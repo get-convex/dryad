@@ -26,7 +26,7 @@ ${body}
 }
 
 export async function generateEmbeddings(
-  fragments: string[]
+  fragments: string[],
 ): Promise<number[][]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,

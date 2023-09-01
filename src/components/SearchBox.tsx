@@ -26,7 +26,7 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
     {
       target: containerRef,
       preventLostKeyup: true,
-    }
+    },
   );
   useKeys(
     ["Enter"],
@@ -46,7 +46,7 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
     {
       target: inputRef,
       preventLostKeyup: true,
-    }
+    },
   );
   return (
     <div>
