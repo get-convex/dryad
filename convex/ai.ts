@@ -39,7 +39,6 @@ export async function generateEmbeddings(
   return vectors;
 }
 
-export async function generateEmbedding(
-    fragment: string): Promise<number[]> {
-    return (await generateEmbeddings([fragment]))[0];
+export async function generateEmbedding(fragment: string): Promise<number[]> {
+  return (await generateEmbeddings([fragment]))[0];
 }
