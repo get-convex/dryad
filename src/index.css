@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: rgb(28, 53, 58);
+}
+
+.title_font {
+  font-family: 'Raleway', sans-serif;
+}
