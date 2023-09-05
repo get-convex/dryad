@@ -3,7 +3,7 @@ import githubLogo from "./assets/Github_white.svg";
 import convexLogo from "./assets/convex_logo.svg";
 import "./App.css";
 import SearchBox from "./components/SearchBox";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SearchResult } from "../convex/search";
 import SearchResults from "./components/SearchResults";
 import CodeDisplay from "./components/CodeDisplay";
@@ -17,20 +17,21 @@ function App() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loadedResult, setLoadedResult] = useState<SearchResult | null>(null);
   const [infoOpen, setInfoOpen] = useState(false);
+  const codeDisplayRef = useRef(null);
   return (
     <div className="flex flex-col h-screen justify-between">
       <main className="p-8 text-slate-200">
-        <div className="flex">
+        <div className="flex flex-wrap">
           <div className="flex-initial">
             <img src={dryadLogo} className="w-32" alt="Dryad logo" />
           </div>
-          <div className="flex-auto flex-col pt-6">
+          <div className="flex flex-auto flex-col pt-6">
             <div className="text-7xl title_font">dryad</div>
             <div className="text-3xl text-slate-400 title_font">
               talk to your tree
             </div>
           </div>
-          <div className="flex-auto flex-col pt-6 w-32">
+          <div className="flex flex-auto flex-col pt-6 w-32">
             <div className="mb-2">
               Indexing events{" "}
               <span className="animate-pulse text-yellow-100">live</span>
@@ -40,8 +41,8 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="mt-8 flex">
-          <div className="flex-initial min-w-1/3 w-1/3 px-8">
+        <div className="mt-8 flex flex-wrap md:flex-nowrap">
+          <div className="flex-initial md:min-w-1/3 md:w-1/3 px-8">
             <SearchBox
               update={setResults}
               newSearch={() => {
@@ -52,11 +53,17 @@ function App() {
             <SearchResults
               results={results}
               loadResult={(result) => {
+                if (codeDisplayRef.current !== null) {
+                  (codeDisplayRef.current as HTMLElement).scrollIntoView(true);
+                }
                 setLoadedResult(result);
               }}
             />
           </div>
-          <div className="flex-grow px-8 border-l-emerald-200 border-l-2">
+          <div
+            ref={codeDisplayRef}
+            className="flex-grow px-8 md:border-l-emerald-200 md:border-l-2"
+          >
             {loadedResult ? (
               <CodeDisplay result={loadedResult} />
             ) : results.length === 0 ? (
@@ -70,13 +77,13 @@ function App() {
       </main>
       <footer className="h-12 texture-footer">
         {settings && (
-          <div className="flex-row text-slate-200 font-semibold text-center text-l mt-2">
+          <div className="flex-row text-slate-200 md:font-semibold text-center text-xs md:text-l mt-2">
             <span className="mb-4 pr-4 border-r-2">
-              A{" "}
+              <span className="hidden md:inline">A </span>
               <a target="_blank" href="https://convex.dev">
-                <img src={convexLogo} className="h-10 pb-1 inline" />
+                <img src={convexLogo} className="h-4 md:h-10 pb-1 inline" />
               </a>{" "}
-              jam
+              <span className="hidden md:inline">jam</span>
             </span>
             <span
               className="hover:underline cursor-pointer px-4 border-r-2"
@@ -90,7 +97,10 @@ function App() {
                 className="hover:underline"
                 target="_blank"
               >
-                Fork dryad and index <em>your</em> code
+                Fork dryad
+                <span className="hidden md:inline">
+                  and index <em>your</em> code
+                </span>
                 <img src={githubLogo} className="pl-2 pb-1 h-6 inline" />
               </a>
             </span>

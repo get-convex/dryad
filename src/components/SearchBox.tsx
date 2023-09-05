@@ -27,7 +27,7 @@ const SearchBox: FC<SearchProps> = ({ update, newSearch }) => {
     {
       target: containerRef,
       preventLostKeyup: true,
-    }
+    },
   );
   useKeys(
     ["Enter"],
@@ -48,11 +48,14 @@ const SearchBox: FC<SearchProps> = ({ update, newSearch }) => {
     {
       target: inputRef,
       preventLostKeyup: true,
-    }
+    },
   );
   return (
-    <div>
-      <label htmlFor="search" className="block text-lg font-medium leading-6">
+    <div className="py-3">
+      <label
+        htmlFor="search"
+        className="block pb-2 text-lg font-medium leading-6"
+      >
         Find code{" "}
         {settings && (
           <>
@@ -69,7 +72,7 @@ const SearchBox: FC<SearchProps> = ({ update, newSearch }) => {
       </label>
       <div className="relative mt-2 flex items-center">
         <input
-        autoFocus
+          autoFocus
           placeholder="authenticates users"
           ref={inputRef}
           type="text"
@@ -78,7 +81,7 @@ const SearchBox: FC<SearchProps> = ({ update, newSearch }) => {
           className="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
         />
         <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-          <kbd className="inline-flex items-center rounded border border-gray-200 px-1 font-sans text-xs text-gray-400">
+          <kbd className="hidden md:inline-flex items-center rounded border border-gray-200 px-1 font-sans text-xs text-gray-400">
             ⌘K
           </kbd>
         </div>

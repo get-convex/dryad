@@ -7,7 +7,7 @@ const DEFAULT_MODEL = "gpt-4";
 export async function summarize(
   settings: Doc<"settings">,
   path: string,
-  body: string
+  body: string,
 ): Promise<string> {
   const prompt = `
 Please provide a list of the main goals
@@ -33,7 +33,7 @@ ${body}
 }
 
 export async function generateEmbeddings(
-  fragments: string[]
+  fragments: string[],
 ): Promise<number[][]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,

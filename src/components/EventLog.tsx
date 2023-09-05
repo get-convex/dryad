@@ -72,7 +72,7 @@ const EventLog: FC<unknown> = () => {
                     <span
                       className={classNames(
                         ui?.iconClass,
-                        "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
+                        "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white",
                       )}
                     >
                       <ui.icon

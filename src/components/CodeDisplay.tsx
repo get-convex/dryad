@@ -57,7 +57,7 @@ const CodeDisplay: FC<CodeDisplayProps> = ({ result }) => {
           )}
         </div>
         <SyntaxHighlighter
-          class="overflow-scroll bg-slate-300"
+          className="overflow-scroll bg-slate-300"
           language={result.language.toLowerCase()}
           style={dracula}
           wrapLongLines={true}

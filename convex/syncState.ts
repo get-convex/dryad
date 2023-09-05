@@ -19,7 +19,9 @@ export const startCommit = internalMutation({
       commit: args.commit,
       commitDone: false,
     });
-    const lastEntry = (await ctx.db.query("log").withIndex("cursor").order("desc").first())?.cursor ?? 0;
+    const lastEntry =
+      (await ctx.db.query("log").withIndex("cursor").order("desc").first())
+        ?.cursor ?? 0;
     await ctx.db.insert("log", {
       cursor: lastEntry + 1,
       sha: args.commit,

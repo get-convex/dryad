@@ -12,7 +12,7 @@ const SearchResults: FC<SearchResultsProps> = ({ results, loadResult }) => {
       {results.map((r, i) => {
         return (
           <li
-            key={r.path}
+            key={i}
             className="overflow-hidden hover:bg-amber-100 bg-amber-50 px-2 py-3 shadow sm:rounded-md sm:px-6 cursor-pointer"
             onClick={(e) => {
               loadResult(r);
