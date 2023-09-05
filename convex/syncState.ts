@@ -1,6 +1,7 @@
 import { Doc } from "./_generated/dataModel";
 import { internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
+import { writeLog } from "./log";
 
 export const get = internalQuery({
   args: {},
@@ -19,14 +20,7 @@ export const startCommit = internalMutation({
       commit: args.commit,
       commitDone: false,
     });
-    const lastEntry =
-      (await ctx.db.query("log").withIndex("cursor").order("desc").first())
-        ?.cursor ?? 0;
-    await ctx.db.insert("log", {
-      cursor: lastEntry + 1,
-      sha: args.commit,
-      operator: "start",
-    });
+    await writeLog(ctx, "start", args.commit);
   },
 });
 
