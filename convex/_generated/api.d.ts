@@ -17,6 +17,7 @@ import type {
 import type * as ai from "../ai";
 import type * as crons from "../crons";
 import type * as files from "../files";
+import type * as log from "../log";
 import type * as repo from "../repo";
 import type * as search from "../search";
 import type * as settings from "../settings";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   ai: typeof ai;
   crons: typeof crons;
   files: typeof files;
+  log: typeof log;
   repo: typeof repo;
   search: typeof search;
   settings: typeof settings;

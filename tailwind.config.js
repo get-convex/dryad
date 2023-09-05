@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        dryad: "##1C353A",
+        dryad: "#1C353A",
       },
     },
   },

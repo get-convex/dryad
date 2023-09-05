@@ -33,4 +33,10 @@ export default defineSchema({
     byteLimit: v.optional(v.number()),
     chatModel: v.optional(v.string()),
   }),
+  log: defineTable({
+    cursor: v.number(),
+    operator: v.union(v.literal('add'), v.literal('cleanup'), v.literal('start'), v.literal('finish')),
+    path: v.optional(v.string()),
+    sha: v.string(),
+  }).index("cursor", ["cursor"]),
 });

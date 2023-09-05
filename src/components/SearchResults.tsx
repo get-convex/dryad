@@ -5,12 +5,11 @@ export type SearchResultsProps = {
   results: SearchResult[];
   loadResult: (result: SearchResult) => void;
 };
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 const SearchResults: FC<SearchResultsProps> = ({ results, loadResult }) => {
   return (
     <ul role="list" className="space-y-3 my-5">
-      {results.map((r) => {
+      {results.map((r, i) => {
         return (
           <li
             key={r.path}
@@ -20,13 +19,22 @@ const SearchResults: FC<SearchResultsProps> = ({ results, loadResult }) => {
               e.preventDefault();
             }}
           >
-            <ChevronRightIcon className="w-6 z-10 absolute" />
             <div className="flex-col text-slate-700">
-              <div className="flex-row text-ellipsis overflow-hidden text-nowrap">
-                <i className={`devicon-${r.language.toLowerCase()}-plain`}></i>
-                <span className="text-sm ">{r.path}</span>
+              <div>
+                <span className="text-lg">#{i + 1}</span> (
+                <span className="text-slate-500">
+                  {(r.score * 100.0).toPrecision(3)}% match)
+                </span>
               </div>
-              <div className="text-xs">{r.goal}</div>
+              <div className="flex-row text-ellipsis overflow-hidden text-nowrap">
+                <i
+                  className={`devicon-${r.language.toLowerCase()}-plain text-lg mr-2`}
+                ></i>
+                <span className="text-md mb-1 inline-block font-bold">
+                  {r.path}
+                </span>
+              </div>
+              <div className="text-sm">{r.goal}</div>
             </div>
           </li>
         );

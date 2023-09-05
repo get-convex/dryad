@@ -32,6 +32,7 @@ export const checkPending = internalMutation({
 });
 
 async function recursiveDeleteFile(ctx: MutationCtx, id: Id<"files">) {
+  const oldFile = await ctx.db.get(id);
   await ctx.db.delete(id);
   const goals = await ctx.db
     .query("fileGoals")
@@ -40,6 +41,15 @@ async function recursiveDeleteFile(ctx: MutationCtx, id: Id<"files">) {
   for (const goal of goals) {
     await ctx.db.delete(goal._id);
   }
+  const lastEntry =
+    (await ctx.db.query("log").withIndex("cursor").order("desc").first())
+      ?.cursor ?? 0;
+  await ctx.db.insert("log", {
+    cursor: lastEntry + 1,
+    sha: oldFile!.fileSha,
+    path: oldFile!.path,
+    operator: "cleanup",
+  });
 }
 
 export const index = internalMutation({
@@ -75,6 +85,17 @@ export const index = internalMutation({
         vector: args.vectors[i],
       });
     }
+
+    // 3. Log
+    const lastEntry =
+      (await ctx.db.query("log").withIndex("cursor").order("desc").first())
+        ?.cursor ?? 0;
+    await ctx.db.insert("log", {
+      cursor: lastEntry + 1,
+      sha: args.fileSha,
+      path: args.path,
+      operator: "add",
+    });
   },
 });
 
@@ -103,6 +124,14 @@ export const clearDeadFiles = internalMutation({
       await ctx.db.patch(syncState!._id, {
         commitDone: true,
       });
+      const lastEntry =
+        (await ctx.db.query("log").withIndex("cursor").order("desc").first())
+          ?.cursor ?? 0;
+      await ctx.db.insert("log", {
+        cursor: lastEntry + 1,
+        sha: args.commit,
+        operator: "finish",
+      });
       return false; // no more work to do.
     } else {
       for (const f of batch) {
@@ -127,6 +156,7 @@ export const getGoalAndFile = internalQuery({
       path: f!.path,
       language: f!.language,
       goal: fg.goal,
+      treeSha: f!.treeSha,
     };
   },
 });

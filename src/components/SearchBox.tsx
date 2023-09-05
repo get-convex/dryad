@@ -6,9 +6,10 @@ import { SearchResult } from "../../convex/search";
 
 export type SearchProps = {
   update: (results: SearchResult[]) => void;
+  newSearch: () => void;
 };
 
-const SearchBox: FC<SearchProps> = ({ update }) => {
+const SearchBox: FC<SearchProps> = ({ update, newSearch }) => {
   const inputRef = useRef(null);
   const containerRef = useRef(document);
   const search = useAction(api.search.search);
@@ -17,7 +18,6 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
   useKeys(
     ["Meta", "k"],
     (e) => {
-      console.log("called!");
       if (inputRef.current) {
         const input = inputRef.current as HTMLInputElement;
         input.focus();
@@ -40,6 +40,7 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
           const results = await search({ query });
           update(results);
         };
+        newSearch();
         executeAction();
       }
       e.preventDefault();
@@ -51,23 +52,24 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
   );
   return (
     <div>
-      <label htmlFor="search" className="block text-md font-medium leading-6">
-        Find me code{" "}
+      <label htmlFor="search" className="block text-lg font-medium leading-6">
+        Find code{" "}
         {settings && (
           <>
             in{" "}
             <a
-              className="text-lg text-yellow-200"
+              className="text-lg text-yellow-100 hover:underline"
               href={`https://github.com/${settings.org}/${settings.repo}`}
             >
               {settings.org}/{settings.repo}
             </a>{" "}
           </>
         )}
-        that...
+        which...
       </label>
       <div className="relative mt-2 flex items-center">
         <input
+        autoFocus
           placeholder="authenticates users"
           ref={inputRef}
           type="text"

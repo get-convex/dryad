@@ -8,6 +8,7 @@ export type SearchResult = {
   language: string;
   goal: string;
   score: number;
+  treeSha: string;
 };
 
 export const search = action({
