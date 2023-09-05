@@ -1,9 +1,25 @@
+/** Model management for file and file goal state.
+ *
+ * These functions abstract the transactional model for how we
+ * update and delete file contents as the repository changes, and how
+ * we relationally associate goals (and their embeddings) with the
+ * file that generated them.
+ */
 import { Id } from "./_generated/dataModel";
 import { internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 import { MutationCtx } from "./_generated/server";
 import { writeLog } from "./log";
 
+/** Given a source code file at `path`, check to see if we've
+ * already indexed it with sha `fileSha`.
+ *
+ * If so, we'll return `false` and update the file's `treeSha`
+ * to the provided one to mark it still in the current snapshot.
+ *
+ * If not, we'll return `true`, telling the crawler to re-download
+ * and re-index the newer file contents.
+ */
 export const checkPending = internalMutation({
   args: {
     path: v.string(),
@@ -32,6 +48,9 @@ export const checkPending = internalMutation({
   },
 });
 
+/** Delete the file with id = `id` and also delete all associated goals and
+ * embeddings.
+ */
 async function recursiveDeleteFile(ctx: MutationCtx, id: Id<"files">) {
   const oldFile = await ctx.db.get(id);
   await ctx.db.delete(id);
@@ -45,6 +64,11 @@ async function recursiveDeleteFile(ctx: MutationCtx, id: Id<"files">) {
   await writeLog(ctx, "cleanup", oldFile!.fileSha, oldFile!.path);
 }
 
+/** Add the given file at `path` with summarized `goals` and embeddings
+ * in `vectors` to our database. The file was fetched as part of the
+ * tree snapshot at `treeSha`, and was inferred to be in programming
+ * language `language`.
+ */
 export const index = internalMutation({
   args: {
     path: v.string(),
@@ -84,6 +108,10 @@ export const index = internalMutation({
   },
 });
 
+/** Grab a batch of any files in the database at any commit not
+ * equal to the given `commit`. Recursively delete them so they're
+ * no longer searchable.
+ */
 export const clearDeadFiles = internalMutation({
   args: {
     commit: v.string(),
@@ -94,6 +122,10 @@ export const clearDeadFiles = internalMutation({
       return;
     }
 
+    // A little ugly two pass thing. Convex doesn't have a great way
+    // to do "not equals" on an index, so we just fetch records less than
+    // and then greater than the specific valid value (the current commit
+    // hash.
     let batch = await ctx.db
       .query("files")
       .withIndex("treeSha", (q) => q.lt("treeSha", args.commit))
@@ -104,6 +136,9 @@ export const clearDeadFiles = internalMutation({
         .withIndex("treeSha", (q) => q.gt("treeSha", args.commit))
         .take(10);
     }
+    // If we *still* don't have anything to clean up, we're done
+    // and only valid files are left in the search index for the
+    // given commit.
     if (batch.length === 0) {
       // We're done cleaning up other entries!
       await ctx.db.patch(syncState!._id, {
@@ -120,6 +155,12 @@ export const clearDeadFiles = internalMutation({
   },
 });
 
+/** Grab the goal provided by `id` and information about its
+ * associated file.
+ * 
+ * This is used to fetch a search result, where a query has
+ * had a match with a particular embedding associated with a goal.
+ * */
 export const getGoalAndFile = internalQuery({
   args: {
     id: v.id("fileGoals"),
