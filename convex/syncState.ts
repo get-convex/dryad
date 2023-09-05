@@ -9,7 +9,11 @@
  *    6. Done with next commit.
  */
 import { Doc } from "./_generated/dataModel";
-import { internalMutation, internalQuery } from "./_generated/server";
+import {
+  MutationCtx,
+  internalMutation,
+  internalQuery,
+} from "./_generated/server";
 import { v } from "convex/values";
 import { writeLog } from "./log";
 
@@ -39,28 +43,37 @@ export const startCommit = internalMutation({
   },
 });
 
-/** Reset the sync state back to an "initial sync" one. This is useful
- * to force re-indexing, and it also creates the necessary starting
- * record when you first launch dryad.
- */
-export const init = internalMutation({
+/** Reset the sync state back to an "initial sync" one. */
+export const reset = internalMutation({
   handler: async (ctx) => {
     const old = await ctx.db.query("sync").first();
     if (old !== null) {
       await ctx.db.delete(old._id);
     }
+    await runInit(ctx);
+  },
+});
+
+async function runInit(ctx: MutationCtx) {
+  const existingSync = await ctx.db.query("sync").first();
+  if (existingSync === null) {
     await ctx.db.insert("sync", {
       commit: null,
       commitDone: true,
     });
-    const settings = await ctx.db.query("settings").first();
-    if (settings === null) {
-      await ctx.db.insert("settings", {
-        org: "get-convex",
-        repo: "convex-helpers",
-        branch: "main",
-        extensions: [".js", ".html", ".jsx", ".ts", ".tsx", ".css"],
-      });
-    }
-  },
+  }
+  const settings = await ctx.db.query("settings").first();
+  if (settings === null) {
+    await ctx.db.insert("settings", {
+      org: "get-convex",
+      repo: "convex-helpers",
+      branch: "main",
+      extensions: [".js", ".html", ".jsx", ".ts", ".tsx", ".css"],
+    });
+  }
+}
+
+/** Initialize the sync state and settings if they're missing */
+export const init = internalMutation({
+  handler: runInit,
 });
