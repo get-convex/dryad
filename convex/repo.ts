@@ -19,7 +19,7 @@ export const sync = internalAction({
     const settings = await ctx.runQuery(api.settings.get);
     if (!settings) {
       console.log(
-        "Please establish the 'settings' table. Call syncState:init to get initial working values",
+        "Please establish the 'settings' table. Call syncState:init to get initial working values"
       );
       throw "no settings";
     }
@@ -82,7 +82,7 @@ function isPathCode(extensions: Set<string>, path?: string): boolean {
 async function indexCurrentFiles(
   settings: Doc<"settings">,
   ctx: ActionCtx,
-  syncState: Doc<"sync">,
+  syncState: Doc<"sync">
 ): Promise<boolean> {
   const extensions: Set<string> = new Set();
   for (const e of settings.extensions!) {
@@ -120,9 +120,9 @@ async function indexCurrentFiles(
       const contents = await fetchRepoFileContents(
         settings,
         github,
-        treeItem.sha!,
+        treeItem.sha!
       );
-      const summary = await summarize(treeItem.path!, contents);
+      const summary = await summarize(settings, treeItem.path!, contents);
       console.log(summary);
       // If this throws an exception, it's likely b/c GPT did something wonky and the
       // JSON wasn't quite formatted correctly. The next pass will almost definitely
@@ -158,7 +158,7 @@ function createOctokit() {
 async function fetchRepoFileContents(
   settings: Doc<"settings">,
   github: Octokit,
-  sha: string,
+  sha: string
 ): Promise<string> {
   const response = await github.rest.git.getBlob({
     owner: settings.org,

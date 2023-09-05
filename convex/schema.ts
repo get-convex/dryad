@@ -31,5 +31,6 @@ export default defineSchema({
     extensions: v.array(v.string()),
     exclusions: v.optional(v.array(v.string())),
     byteLimit: v.optional(v.number()),
+    chatModel: v.optional(v.string()),
   }),
 });

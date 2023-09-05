@@ -33,11 +33,6 @@ function App() {
                   <img src={githubLogo} />
                 </div>
               </div>
-              <div className="text-lg">
-                <a href={`https://github.com/${settings.org}/${settings.repo}`}>
-                  {settings.org}/{settings.repo}
-                </a>
-              </div>
             </div>
           )}
         </div>

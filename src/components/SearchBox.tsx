@@ -1,4 +1,4 @@
-import { useAction } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useRef, FC } from "react";
 import { useKeys } from "rooks";
@@ -12,6 +12,7 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
   const inputRef = useRef(null);
   const containerRef = useRef(document);
   const search = useAction(api.search.search);
+  const settings = useQuery(api.settings.get);
 
   useKeys(
     ["Meta", "k"],
@@ -26,7 +27,7 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
     {
       target: containerRef,
       preventLostKeyup: true,
-    },
+    }
   );
   useKeys(
     ["Enter"],
@@ -46,12 +47,24 @@ const SearchBox: FC<SearchProps> = ({ update }) => {
     {
       target: inputRef,
       preventLostKeyup: true,
-    },
+    }
   );
   return (
     <div>
       <label htmlFor="search" className="block text-md font-medium leading-6">
-        Find me code that...
+        Find me code{" "}
+        {settings && (
+          <>
+            in{" "}
+            <a
+              className="text-lg text-yellow-200"
+              href={`https://github.com/${settings.org}/${settings.repo}`}
+            >
+              {settings.org}/{settings.repo}
+            </a>{" "}
+          </>
+        )}
+        that...
       </label>
       <div className="relative mt-2 flex items-center">
         <input
