@@ -77,7 +77,7 @@ function App() {
       </main>
       <footer className="h-12 texture-footer">
         {settings && (
-          <div className="flex-row text-slate-200 md:font-semibold text-center text-xs md:text-l mt-2">
+          <div className="flex-row text-slate-200 md:font-semibold text-center text-xs md:text-lg mt-2">
             <span className="mb-4 pr-4 border-r-2">
               <span className="hidden md:inline">A </span>
               <a target="_blank" href="https://convex.dev">
@@ -99,7 +99,7 @@ function App() {
               >
                 Fork dryad
                 <span className="hidden md:inline">
-                  and index <em>your</em> code
+                  {" "}and index <em>your</em> code
                 </span>
                 <img src={githubLogo} className="pl-2 pb-1 h-6 inline" />
               </a>
