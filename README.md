@@ -2,7 +2,7 @@
 
 ![dryad](dryad_ss.png)
 
-Dryad talks to you trees! Easy semantic code search on any GitHub repository.
+Dryad talks to you trees. Easy semantic code search on any GitHub repository in ~1000 SLOC.
 
 Dryad is intended to be a useful demo project and starter template for building more sophisticated
 semantic search web apps.
@@ -12,10 +12,10 @@ Features:
 - Automatically tracks changes in the target repo and keeps the search index in sync with `HEAD`
 - Built with [Convex](https://convex.dev), [OpenAI](https://openai.com),
   [Vite](https://vitejs.dev/) + [React](https://react.dev/).
-- Around 1000 lines of code. Easy to read, fork, and modify.
+- Easy to read, fork, and modify.
 - Reconfigurable on the fly using the Convex dashboard
 
-# Running your own Dryad (on your favorite codebase)
+# Running your own dryad (on your favorite codebase)
 
 First, clone the repository and start it up:
 
@@ -40,15 +40,15 @@ Dryad uses OpenAI for summarization and embedding. You'll need an OpenAI platfor
 and an API key. Visit [platform.openai.com](https://platform.openai.com) to
 take care of that.
 
-> :warning: \*\*Summarizing and indexing even a moderate codebase consumes a fair amount of OpenAI
+> :warning: Summarizing and indexing even a moderate codebase consumes a fair amount of OpenAI
 > credits. You will almost certainly need a paid account!
 
 ### GitHub
 
-Anonymous uses of the GitHub API get rate limited very easily. So Dryad require that you
+Anonymous uses of the GitHub API get rate limited very easily. So dryad require that you
 generate a personal access token using your GitHub account. Visit
 [https://github.com/settings/tokens](https://github.com/settings/tokens) to generate
-a token for Dryad.
+a token for dryad.
 
 ### Setting these environment variables in your Convex deployment
 
@@ -58,11 +58,11 @@ and then "Environment Variables".
 
 Name the two secret environment variables `OPENAI_API_KEY` and `GITHUB_ACCESS_TOKEN`, like so:
 
-![dashboard environment variables](dryad_ss.png)
+![dashboard environment variables](env_ss.png)
 
 ## 2. Customize your dryad settings in the `settings` table
 
-If you check the `Logs` view in your Convex dashboard, Dryad now should
+If you check the `Logs` view in your Convex dashboard, dryad now should
 be running successfully! But it's indexing the default repository,
 `get-convex/convex-helpers`. You probably want it indexing your own
 code instead.
@@ -93,14 +93,71 @@ Here's what it looks like:
 ### Settings fields
 
 - **org** - The organization owner of the target GitHub repo to index. For React (https://github.com/facebook/react), this is `facebook`.
-- **repo** - The repository name of the target GitHub repo to index. For React (https://github.com/facebook/react), this is `react`. (This can be private as long as your personal access token has permissions to read it.)
+- **repo** - The repository name of the target GitHub repo to index. For React (https://github.com/facebook/react), this is `react`.
 - **branch** - The the branch name in the repository to index. This is usually 'main', or 'master.
-- **extensions** - An array of file extensions (like '.ts') that should be considered code and therefore Dryad should attempt to index.
+- **extensions** - An array of file extensions (like '.ts') that should be considered code and therefore dryad should attempt to index.
 - **exclusions** - An array of relative file paths with the repository you wish to explicitly skip indexing.
 - **byteLimit** - Do not index files larger than this byte count. Large files will produce more tokens
   that the OpenAI model is able to process in one pass.
 - **chatModel** - Which OpenAI chat model to use for summarizing the purposes of source files. Typical choices are `gpt-3.5-turbo`, `gpt-4`.
 
-# How Dryad works
+# How dryad works
 
-# "Homework" – Candidate improvements to the project
+Three main things to cover:
+
+1. Keeping up to date with repository changes
+2. Indexing source files
+3. Searching for semantic matches
+
+## 1. Keeping up to date with repository changes
+
+Dryad periodically calls a job called `repo:sync`. This
+Convex action uses a table called `syncState` to
+loop between a few states:
+
+1. Polling for a new commit on HEAD.
+2. Indexing that commit
+
+While polling for a new commit, dryad uses the GitHub API (via Octokit)
+to check the sha of the target repo + branch. As long as it remains
+the same as the last indexed sha, `repo:sync` exits until the next poll.
+
+Once a new commit is discovered, `syncState` has a field called `commit`
+that is set to that sha, and a `commitDone` field that is set to false. This puts
+dryad into "Indexing that commit" mode.
+
+When indexing a commit, dryad first uses the GitHub "trees" API to fetch the entire
+file tree of that commit, including the file checksums associated with every file.
+
+Dryad walks this whole tree, only examining "source files" (according to the `settings``
+table's extension specification). For every source file, it determines if the checksum
+has changed since the last time the file was indexed. If the file is new or has changed,
+it is downloaded from the repo and re-indexed.
+
+Otherwise the file is marked current (still valid in the new commit).
+
+Finally, any files that aren't part of this new commit tree are removed from the index.
+And with that, `commitDone` is set to true and dryad goes back to polling for a new commit.
+
+## 2. Indexing source files
+
+Indexing source files involves three steps:
+
+1. Ask ChatGPT to summarize the "primary goals" of the source file in JSON format.
+1. Take each of those goals and independently ask OpenAI to generate a vector embedding
+   for it.
+1. Store each goal and associated vector into Convex, with a reference to the parent source file. The vector uses Convex's vector indexing to support fast searching from the web app.
+
+## 3. Searching for semantic matches
+
+When someone enters a query into the web app, dryad uses the same OpenAI embeddings API to generate
+a vector, and then uses Convex's vector index to find source files with a semantically-similar goal
+to the search term. Internally, cosine similarity is used to score the goals to determine the
+source files most likely to solve the problem the query expresses.
+
+Searching only returns each source file one time, returning the highest-ranked goal as the primary
+reason for inclusion in the result set.
+
+# Exercises – Next improvements for the dryad
+
+The `Issues` have been seeded with [a lot of potential extensions and improvements to dryad](https://github.com/get-convex/dryad/labels/good%20first%20issue) for developers to take on if they're interested.
