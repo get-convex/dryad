@@ -12,7 +12,7 @@ const crons = cronJobs();
 crons.interval(
   "poll for new commits",
   { minutes: 1 }, // every minute
-  internal.repo.sync
+  internal.repo.sync,
 );
 
 export default crons;

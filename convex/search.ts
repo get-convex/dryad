@@ -13,7 +13,7 @@ export type SearchResult = {
 };
 
 /** Conduct a search.
- * 
+ *
  * Generate an embedding from `query` and then use the vector index
  * on our goals to find source files that are likely to help.
  */

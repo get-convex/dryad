@@ -45,7 +45,7 @@ export default defineSchema({
       v.literal("add"),
       v.literal("cleanup"),
       v.literal("start"),
-      v.literal("finish")
+      v.literal("finish"),
     ),
     path: v.optional(v.string()),
     sha: v.string(),

@@ -157,7 +157,7 @@ export const clearDeadFiles = internalMutation({
 
 /** Grab the goal provided by `id` and information about its
  * associated file.
- * 
+ *
  * This is used to fetch a search result, where a query has
  * had a match with a particular embedding associated with a goal.
  * */

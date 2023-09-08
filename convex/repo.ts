@@ -30,7 +30,7 @@ export const sync = internalAction({
     const settings = await ctx.runQuery(api.settings.get);
     if (!settings) {
       console.log(
-        "Please establish the 'settings' table. Call syncState:init to get initial working values"
+        "Please establish the 'settings' table. Call syncState:init to get initial working values",
       );
       throw "no settings";
     }
@@ -118,7 +118,7 @@ function isPathCode(extensions: Set<string>, path?: string): boolean {
 async function indexCurrentFiles(
   settings: Doc<"settings">,
   ctx: ActionCtx,
-  syncState: Doc<"sync">
+  syncState: Doc<"sync">,
 ): Promise<boolean> {
   // Grab a few things from the settings table.
   const extensions: Set<string> = new Set();
@@ -170,7 +170,7 @@ async function indexCurrentFiles(
       const contents = await fetchRepoFileContents(
         settings,
         github,
-        treeItem.sha!
+        treeItem.sha!,
       );
       // 2. Get the goals summary from ChatGPT
       const summary = await summarize(settings, treeItem.path!, contents);
@@ -217,7 +217,7 @@ function createOctokit() {
 async function fetchRepoFileContents(
   settings: Doc<"settings">,
   github: Octokit,
-  sha: string
+  sha: string,
 ): Promise<string> {
   const response = await github.rest.git.getBlob({
     owner: settings.org,

@@ -23,7 +23,7 @@ export const writeLog = async (
   ctx: MutationCtx,
   operator: "add" | "cleanup" | "finish" | "start",
   sha: string,
-  path?: string
+  path?: string,
 ) => {
   // Cursor is monotonically increasing, so we need to grab the maximum value
   // and we'll increment by one.

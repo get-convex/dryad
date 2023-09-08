@@ -13,7 +13,7 @@ const DEFAULT_MODEL = "gpt-4";
 export async function summarize(
   settings: Doc<"settings">,
   path: string,
-  body: string
+  body: string,
 ): Promise<string> {
   // This prompt could use a lot of iteration. In general, this version of asking
   // for the response in JSON format is pretty reliable.
@@ -50,7 +50,7 @@ ${body}
  * with embeddings generated from user-provided prompts.
  */
 export async function generateEmbeddings(
-  fragments: string[]
+  fragments: string[],
 ): Promise<number[][]> {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,

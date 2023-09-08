@@ -99,7 +99,8 @@ function App() {
               >
                 Fork dryad
                 <span className="hidden md:inline">
-                  {" "}and index <em>your</em> code
+                  {" "}
+                  and index <em>your</em> code
                 </span>
                 <img src={githubLogo} className="pl-2 pb-1 h-6 inline" />
               </a>
