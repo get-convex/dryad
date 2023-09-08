@@ -1,8 +1,8 @@
-# dryad
+# dryad - talk to your tree.
+
+Easy semantic code search on any GitHub repository in ~1000 SLOC.
 
 ![dryad](dryad_ss.png)
-
-Dryad talks to you trees. Easy semantic code search on any GitHub repository in ~1000 SLOC.
 
 Dryad is intended to be a useful demo project and starter template for building more sophisticated
 semantic search web apps.
@@ -23,7 +23,7 @@ First, clone the repository and start it up:
     $ npm run dev
 
 This will create your Convex backend deployment, which will
-attempt to start indexing the default repository (https://github.com/get-convex/convex-demos).
+attempt to start indexing the default repository (https://github.com/get-convex/convex-helpers).
 
 Launch the Convex dashboard and watch the logs to follow along:
 
@@ -74,8 +74,7 @@ the `settings` table:
 
 ![settings table](dryad_settings.png)
 
-The, schema of this table can be found in `convex/schema.ts` in this repository.
-Here's what it looks like:
+The schema of this table can be found in `convex/schema.ts` in this repository. Here's what it looks like:
 
 ```tsx
   // Various project settings you can tweak in the dashboard as we go.
@@ -84,11 +83,14 @@ Here's what it looks like:
     repo: v.string(),
     branch: v.string(),
     extensions: v.array(v.string()),
-    exclusions: v.optional(v.array(v.string())),
-    byteLimit: v.optional(v.number()),
-    chatModel: v.optional(v.string()),
+    exclusions: v.optional(v.array(v.string())), // defaults to none
+    byteLimit: v.optional(v.number()), // defaults to 8k
+    chatModel: v.optional(v.string()), // defaults to gpt-3.5-turbo
   }),
 ```
+
+Double click any value in the settings document to edit it, or click the blue "EDIT" button to add missing fields to the document. You shouldn't need to do anything for your changes to take effect. But if you want to reindex anyway click the `Fn` function runner in the lower right panel
+of the dashboard, and then choose to run `syncState:reset` from the dropdown. No arguments are required.
 
 ### Settings fields
 
@@ -158,6 +160,6 @@ source files most likely to solve the problem the query expresses.
 Searching only returns each source file one time, returning the highest-ranked goal as the primary
 reason for inclusion in the result set.
 
-# Exercises – Next improvements for the dryad
+# Exercises – Next improvements for dryad
 
-The `Issues` have been seeded with [a lot of potential extensions and improvements to dryad](https://github.com/get-convex/dryad/labels/good%20first%20issue) for developers to take on if they're interested.
+The `Issues` have been seeded with [a collection of potential extensions and improvements to dryad](https://github.com/get-convex/dryad/labels/good%20first%20issue) for developers to take on if they're interested.
