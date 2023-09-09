@@ -74,6 +74,9 @@ the `settings` table:
 
 ![settings table](dryad_settings.png)
 
+Double click any value in the settings document to edit it, or click the blue "EDIT" button to add missing fields to the document. Normally, you shouldn't need to do anything for your changes to take effect. But if you want to reindex anyway click the `Fn` function runner in the lower right panel
+of the dashboard, and then choose to run `syncState:reset` from the dropdown. No arguments are required.
+
 The schema of this table can be found in `convex/schema.ts` in this repository. Here's what it looks like:
 
 ```tsx
@@ -88,9 +91,6 @@ The schema of this table can be found in `convex/schema.ts` in this repository. 
     chatModel: v.optional(v.string()), // defaults to gpt-3.5-turbo
   }),
 ```
-
-Double click any value in the settings document to edit it, or click the blue "EDIT" button to add missing fields to the document. You shouldn't need to do anything for your changes to take effect. But if you want to reindex anyway click the `Fn` function runner in the lower right panel
-of the dashboard, and then choose to run `syncState:reset` from the dropdown. No arguments are required.
 
 ### Settings fields
 
