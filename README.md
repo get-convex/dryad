@@ -2,6 +2,8 @@
 
 Easy semantic code search on any GitHub repository in ~1000 SLOC.
 
+[Check out the running demo](http://convex.dev/dryad)
+
 ![dryad](dryad_ss.png)
 
 Dryad is intended to be a useful demo project and starter template for building more sophisticated
